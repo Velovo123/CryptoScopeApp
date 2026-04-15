@@ -6,12 +6,13 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct CryptoScopeApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
-        }
+            Text("CryptoScope")
+        }.modelContainer(for: Holding.self)
     }
 }
