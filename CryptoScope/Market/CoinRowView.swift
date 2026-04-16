@@ -53,9 +53,9 @@ struct CoinRowView: View {
                         .font(.subheadline)
                         .fontWeight(.medium)
                         .foregroundStyle(Color.primary)
-                    Text("\(coin.priceChangePercentage24h >= 0 ? "+" : "")\(coin.priceChangePercentage24h, specifier: "%.2f")%")
-                        .font(.caption)
-                        .foregroundStyle(coin.priceChangePercentage24h >= 0 ? Color.priceUp : Color.priceDown)
+                Text(coin.priceChangePercentage24h.formattedAsPercentage)
+                    .font(.caption)
+                    .foregroundStyle(coin.priceChangePercentage24h >= 0 ? Color.priceUp : Color.priceDown)
                 }
         }
         .padding(.vertical, 4)

@@ -10,6 +10,8 @@ import SwiftUI
 struct CoinDetailView: View {
     @State private var model: CoinDetailModel
     @Environment(WatchlistStore.self) private var watchlistStore
+    @Environment(\.modelContext) private var modelContext
+    @State private var showAddHolding = false
     
     init(coinId: String) {
         _model = State(initialValue: CoinDetailModel(coinId: coinId))
@@ -71,8 +73,34 @@ struct CoinDetailView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 10))
             }
             .foregroundStyle(Color.brown)
+
+            Button {
+                showAddHolding = true
+            } label: {
+                Label("Portfolio", systemImage: "plus")
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .background(Color.brown)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+            .foregroundStyle(Color.beige)
         }
         .padding(.top, 8)
+        .sheet(isPresented: $showAddHolding) {
+            AddHoldingView(coins: [model.coinDetail].compactMap { detail in
+                guard let detail else { return nil }
+                return Coin(
+                    id: detail.id,
+                    name: detail.name,
+                    symbol: detail.symbol,
+                    image: detail.image,
+                    currentPrice: detail.currentPrice,
+                    priceChangePercentage24h: detail.priceChangePercentage24h,
+                    marketCapRank: 0,
+                    sparklineIn7d: nil
+                )
+            })
+        }
     }
     
     // MARK: — Header
@@ -82,7 +110,7 @@ struct CoinDetailView: View {
                 .font(.largeTitle)
                 .fontWeight(.medium)
             
-            Text("\(model.priceChange >= 0 ? "+" : "")\(model.priceChange, specifier: "%.2f")% today")
+            Text(model.priceChange.formattedAsPercentage + " today")
                 .font(.subheadline)
                 .foregroundStyle(model.priceChange >= 0 ? Color.priceUp : Color.priceDown)
         }

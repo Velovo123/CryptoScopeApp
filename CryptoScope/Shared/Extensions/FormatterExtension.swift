@@ -17,6 +17,11 @@ extension Double {
         return formatter.string(from: NSNumber(value: self)) ?? ""
     }
     
+    var formattedAsPercentage: String {
+        let prefix = self >= 0 ? "+" : ""
+        return prefix + String(format: "%.2f", self) + "%"
+    }
+    
     var formattedAsCompact: String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
