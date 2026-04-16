@@ -34,5 +34,5 @@ struct MainAppView: View {
 }
 
 #Preview {
-    MainAppView()
+    MainAppView().environment(WatchlistStore())
 }

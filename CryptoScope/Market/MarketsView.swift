@@ -21,7 +21,7 @@ struct MarketsView: View {
                 } else {
                     coinList
                 }
-            }
+            }.appBackground()
             .navigationTitle("Markets")
             .searchable(text: $model.searchText, prompt: "Search coins...")
             .task {
@@ -31,7 +31,6 @@ struct MarketsView: View {
                 await model.fetchCoins()
             }
         }
-        .appBackground()
     }
     
     private var coinList: some View {
@@ -46,5 +45,5 @@ struct MarketsView: View {
 }
 
 #Preview {
-    MarketsView()
+    MarketsView().environment(WatchlistStore())
 }

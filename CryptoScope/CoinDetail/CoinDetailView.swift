@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CoinDetailView: View {
     @State private var model: CoinDetailModel
+    @Environment(WatchlistStore.self) private var watchlistStore
     
     init(coinId: String) {
         _model = State(initialValue: CoinDetailModel(coinId: coinId))
@@ -49,6 +50,29 @@ struct CoinDetailView: View {
         .task {
             await model.fetchData()
         }
+    }
+    
+    private var actionButtons: some View {
+        HStack(spacing: 12) {
+            Button {
+                if watchlistStore.contains(model.coinDetail?.id ?? "") {
+                    watchlistStore.remove(model.coinDetail?.id ?? "")
+                } else {
+                    watchlistStore.add(model.coinDetail?.id ?? "")
+                }
+            } label: {
+                Label(
+                    watchlistStore.contains(model.coinDetail?.id ?? "") ? "Watchlisted" : "Watchlist",
+                    systemImage: watchlistStore.contains(model.coinDetail?.id ?? "") ? "star.fill" : "star"
+                )
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
+                .background(Color.lightBrown.opacity(0.3))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+            .foregroundStyle(Color.brown)
+        }
+        .padding(.top, 8)
     }
     
     // MARK: — Header
@@ -104,7 +128,9 @@ struct CoinDetailView: View {
                 StatCardView(title: "24h high", value: model.high24h.formattedAsPrice)
                 StatCardView(title: "24h low", value: model.low24h.formattedAsPrice)
             }
+            actionButtons
         }
+        
     }
     
     private func label(for days: Int) -> String {
@@ -119,5 +145,5 @@ struct CoinDetailView: View {
 }
 
 #Preview {
-    CoinDetailView(coinId: "bitcoin")
+    CoinDetailView(coinId: "bitcoin").environment(WatchlistStore())
 }

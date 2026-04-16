@@ -10,9 +10,12 @@ import SwiftData
 
 @main
 struct CryptoScopeApp: App {
+    @State private var watchlistStore = WatchlistStore()
+    
     var body: some Scene {
         WindowGroup {
             MainAppView()
+                .environment(watchlistStore)
         }.modelContainer(for: Holding.self)
     }
 }
