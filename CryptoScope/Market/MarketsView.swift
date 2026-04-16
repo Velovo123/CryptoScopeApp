@@ -36,7 +36,7 @@ struct MarketsView: View {
     
     private var coinList: some View {
         List(model.filteredCoins) { coin in
-            NavigationLink(destination: Text("Coin Detail — coming soon")) {
+            NavigationLink(destination: CoinDetailView(coinId: coin.id)) {
                 CoinRowView(coin: coin)
             }
             .listRowBackground(Color.beige)

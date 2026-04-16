@@ -13,10 +13,10 @@ class MockDataService: DataServiceProtocol {
     }
     
     func fetchCoinDetail(id: String) async throws -> CoinDetail {
-        MockData.coinDetail
+        MockData.coinDetails[id] ?? MockData.coinDetails["bitcoin"]!
     }
-    
+
     func fetchPriceHistory(id: String, days: Int) async throws -> [PricePoint] {
-        MockData.priceHistory
+        MockData.priceHistories[id] ?? MockData.priceHistory
     }
 }
