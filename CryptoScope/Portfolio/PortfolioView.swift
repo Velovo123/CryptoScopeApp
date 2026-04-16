@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct PortfolioView: View {
+    @Environment(\.modelContext) private var modelContext
     @State private var model = PortfolioModel()
     @State private var showAddHolding = false
 
@@ -17,7 +18,9 @@ struct PortfolioView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if holdings.isEmpty {
+                if model.isLoading {
+                    ProgressView()
+                } else if holdings.isEmpty {
                     emptyState
                 } else {
                     portfolioList
@@ -121,9 +124,9 @@ struct PortfolioView: View {
     // MARK: - Delete
     private func deleteHolding(at offsets: IndexSet) {
         for index in offsets {
-            let holding = holdings[index]
-            // modelContext not available directly, use environment
+            modelContext.delete(holdings[index])
         }
+        try? modelContext.save()
     }
 }
 

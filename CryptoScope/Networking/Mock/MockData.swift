@@ -177,6 +177,22 @@ struct MockData {
                 circulatingSupply: 1_400_000_000,
                 priceChangePercentage24h: 1.8
             )
+        ),
+        "avalanche-2": CoinDetail(
+            id: "avalanche-2",
+            name: "Avalanche",
+            symbol: "avax",
+            image: "https://assets.coingecko.com/coins/images/12559/large/Avalanche_Circle_RedWhite_Trans.png",
+            marketData: MarketData(
+                currentPrice: ["usd": 19.84],
+                marketCap: ["usd": 8_200_000_000],
+                totalVolume: ["usd": 320_000_000],
+                high24h: ["usd": 20.50],
+                low24h: ["usd": 19.20],
+                ath: ["usd": 146.22],
+                circulatingSupply: 412_000_000,
+                priceChangePercentage24h: 3.7
+            )
         )
     ]
     
@@ -216,6 +232,13 @@ struct MockData {
             5.66, 5.67, 5.68, 5.70, 5.71, 5.72, 5.74,
             5.75, 5.76, 5.78, 5.79, 5.80, 5.81, 0.82,
             5.83, 5.84
+        ]),
+        "avalanche-2": makePriceHistory(prices: [
+            18.0, 18.1, 18.3, 18.2, 18.5, 18.6, 18.7,
+            18.6, 18.8, 18.9, 19.0, 18.9, 19.1, 19.2,
+            19.1, 19.3, 19.2, 19.4, 19.3, 19.5, 19.4,
+            19.5, 19.6, 19.7, 19.6, 19.7, 19.8, 19.7,
+            19.8, 19.84
         ])
     ]
     
