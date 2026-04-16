@@ -12,7 +12,7 @@ import SwiftData
 struct CryptoScopeApp: App {
     var body: some Scene {
         WindowGroup {
-            Text("CryptoScope")
+            MainAppView()
         }.modelContainer(for: Holding.self)
     }
 }
