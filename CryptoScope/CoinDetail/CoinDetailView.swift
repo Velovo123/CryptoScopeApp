@@ -18,23 +18,26 @@ struct CoinDetailView: View {
     }
     
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                if model.isLoading {
-                    ProgressView()
-                        .frame(maxWidth: .infinity)
-                } else if let error = model.errorMessage {
-                    Text(error)
-                        .foregroundStyle(.red)
-                } else {
-                    headerSection
-                    timeRangeSelector
-                    PriceChartView(priceHistory: model.priceHistory)
-                    statsSection
+        Group {
+            if model.isLoading {
+                LoadingView()
+            } else if let error = model.errorMessage {
+                ErrorView(message: error) {
+                    await model.fetchData()
+                }
+            } else {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 16) {
+                        headerSection
+                        timeRangeSelector
+                        PriceChartView(priceHistory: model.priceHistory)
+                        statsSection
+                    }
+                    .padding()
                 }
             }
-            .padding()
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .appBackground()
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -52,40 +55,6 @@ struct CoinDetailView: View {
         .task {
             await model.fetchData()
         }
-    }
-    
-    private var actionButtons: some View {
-        HStack(spacing: 12) {
-            Button {
-                if watchlistStore.contains(model.coinDetail?.id ?? "") {
-                    watchlistStore.remove(model.coinDetail?.id ?? "")
-                } else {
-                    watchlistStore.add(model.coinDetail?.id ?? "")
-                }
-            } label: {
-                Label(
-                    watchlistStore.contains(model.coinDetail?.id ?? "") ? "Watchlisted" : "Watchlist",
-                    systemImage: watchlistStore.contains(model.coinDetail?.id ?? "") ? "star.fill" : "star"
-                )
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 10)
-                .background(Color.lightBrown.opacity(0.3))
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-            }
-            .foregroundStyle(Color.brown)
-
-            Button {
-                showAddHolding = true
-            } label: {
-                Label("Portfolio", systemImage: "plus")
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 10)
-                    .background(Color.brown)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-            }
-            .foregroundStyle(Color.beige)
-        }
-        .padding(.top, 8)
         .sheet(isPresented: $showAddHolding) {
             AddHoldingView(coins: [model.coinDetail].compactMap { detail in
                 guard let detail else { return nil }
@@ -158,7 +127,41 @@ struct CoinDetailView: View {
             }
             actionButtons
         }
-        
+    }
+    
+    // MARK: — Action Buttons
+    private var actionButtons: some View {
+        HStack(spacing: 12) {
+            Button {
+                if watchlistStore.contains(model.coinDetail?.id ?? "") {
+                    watchlistStore.remove(model.coinDetail?.id ?? "")
+                } else {
+                    watchlistStore.add(model.coinDetail?.id ?? "")
+                }
+            } label: {
+                Label(
+                    watchlistStore.contains(model.coinDetail?.id ?? "") ? "Watchlisted" : "Watchlist",
+                    systemImage: watchlistStore.contains(model.coinDetail?.id ?? "") ? "star.fill" : "star"
+                )
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
+                .background(Color.lightBrown.opacity(0.3))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+            .foregroundStyle(Color.brown)
+            
+            Button {
+                showAddHolding = true
+            } label: {
+                Label("Portfolio", systemImage: "plus")
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .background(Color.brown)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+            .foregroundStyle(Color.beige)
+        }
+        .padding(.top, 8)
     }
     
     private func label(for days: Int) -> String {
@@ -173,5 +176,6 @@ struct CoinDetailView: View {
 }
 
 #Preview {
-    CoinDetailView(coinId: "bitcoin").environment(WatchlistStore())
+    CoinDetailView(coinId: "bitcoin")
+        .environment(WatchlistStore())
 }

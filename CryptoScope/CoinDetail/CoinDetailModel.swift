@@ -18,10 +18,20 @@ class CoinDetailModel {
     
     private let coinId: String
     private let service: DataServiceProtocol
+    private var cachedHistories: [Int: [PricePoint]] = [:]
+    private var currentTask: Task<Void, Never>? = nil
+    private var cachedDetail: CoinDetail? = nil
+    private var detailFetchTime: Date? = nil
+    private let cacheExpiry: TimeInterval = 120
     
-    init(coinId: String, service: DataServiceProtocol = MockDataService()) {
+    init(coinId: String, service: DataServiceProtocol = AppConfig.service) {
         self.coinId = coinId
         self.service = service
+    }
+    
+    private var isDetailCacheValid: Bool {
+        guard let detailFetchTime else { return false }
+        return Date().timeIntervalSince(detailFetchTime) < cacheExpiry
     }
     
     var currentPrice: Double {
@@ -53,17 +63,33 @@ class CoinDetailModel {
     }
     
     func fetchData() async {
+        if isDetailCacheValid, let cached = cachedDetail {
+            coinDetail = cached
+            if let cachedHistory = cachedHistories[selectedRange] {
+                priceHistory = cachedHistory
+            }
+            return
+        }
+        
         isLoading = true
         errorMessage = nil
         
-        do {
-            async let detail = service.fetchCoinDetail(id: coinId)
-            async let history = service.fetchPriceHistory(id: coinId, days: selectedRange)
-            
-            coinDetail = try await detail
-            priceHistory = try await history
-        } catch {
-            errorMessage = error.localizedDescription
+        await withMinimumDuration(seconds: 1.5) {
+            do {
+                async let detail = self.service.fetchCoinDetail(id: self.coinId)
+                async let history = self.service.fetchPriceHistory(id: self.coinId, days: self.selectedRange)
+                
+                let fetchedDetail = try await detail
+                let fetchedHistory = try await history
+                
+                self.cachedDetail = fetchedDetail
+                self.detailFetchTime = Date()
+                self.cachedHistories[self.selectedRange] = fetchedHistory
+                self.coinDetail = fetchedDetail
+                self.priceHistory = fetchedHistory
+            } catch {
+                self.errorMessage = error.localizedDescription
+            }
         }
         
         isLoading = false
@@ -71,6 +97,26 @@ class CoinDetailModel {
     
     func changeRange(days: Int) async {
         selectedRange = days
-        priceHistory = (try? await service.fetchPriceHistory(id: coinId, days: days)) ?? []
+        
+        if let cached = cachedHistories[days] {
+            priceHistory = cached
+            return
+        }
+        
+        currentTask?.cancel()
+        
+        currentTask = Task {
+            do {
+                let history = try await service.fetchPriceHistory(id: coinId, days: days)
+                guard !Task.isCancelled else { return }
+                cachedHistories[days] = history
+                priceHistory = history
+            } catch {
+                guard !Task.isCancelled else { return }
+                errorMessage = error.localizedDescription
+            }
+        }
+        
+        await currentTask?.value
     }
 }

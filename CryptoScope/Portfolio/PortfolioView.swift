@@ -19,7 +19,7 @@ struct PortfolioView: View {
         NavigationStack {
             Group {
                 if model.isLoading {
-                    ProgressView()
+                    LoadingView()
                 } else if holdings.isEmpty {
                     emptyState
                 } else {

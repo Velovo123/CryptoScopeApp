@@ -17,7 +17,7 @@ class PortfolioModel {
 
     private let service: DataServiceProtocol
 
-    init(service: DataServiceProtocol = MockDataService()) {
+    init(service: DataServiceProtocol = AppConfig.service) {
         self.service = service
     }
 
@@ -46,11 +46,15 @@ class PortfolioModel {
     func fetchCoins() async {
         isLoading = true
         errorMessage = nil
-        do {
-            coins = try await service.fetchCoins()
-        } catch {
-            errorMessage = error.localizedDescription
+        
+        await withMinimumDuration(seconds: 1.5) {
+            do {
+                self.coins = try await self.service.fetchCoins()
+            } catch {
+                self.errorMessage = error.localizedDescription
+            }
         }
+        
         isLoading = false
     }
 }

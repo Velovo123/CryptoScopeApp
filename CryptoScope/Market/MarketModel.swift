@@ -16,32 +16,40 @@ class MarketModel {
     var errorMessage: String? = nil
     
     private let service: DataServiceProtocol
+    private var lastFetchTime: Date? = nil
+    private let cacheExpiry: TimeInterval = 120 // 2 minutes
     
-    init(service: DataServiceProtocol = MockDataService()) {
+    init(service: DataServiceProtocol = AppConfig.service) {
         self.service = service
+    }
+    
+    var isCacheValid: Bool {
+        guard let lastFetchTime else { return false }
+        return Date().timeIntervalSince(lastFetchTime) < cacheExpiry
     }
     
     var filteredCoins: [Coin] {
         let sorted = coins.sorted { $0.marketCapRank < $1.marketCapRank }
-        
-        if searchText.isEmpty {
-            return sorted
-        }
-        
+        if searchText.isEmpty { return sorted }
         return sorted.filter {
             $0.name.localizedCaseInsensitiveContains(searchText) ||
             $0.symbol.localizedCaseInsensitiveContains(searchText)
         }
     }
     
-    func fetchCoins() async {
+    func fetchCoins(forceRefresh: Bool = false) async {
+        if isCacheValid && !forceRefresh && !coins.isEmpty { return }
+        
         isLoading = true
         errorMessage = nil
         
-        do {
-            coins = try await service.fetchCoins()
-        } catch {
-            errorMessage = error.localizedDescription
+        await withMinimumDuration(seconds: 1.5) {
+            do {
+                self.coins = try await self.service.fetchCoins()
+                self.lastFetchTime = Date()
+            } catch {
+                self.errorMessage = error.localizedDescription
+            }
         }
         
         isLoading = false

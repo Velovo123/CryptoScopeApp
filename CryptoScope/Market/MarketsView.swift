@@ -14,10 +14,11 @@ struct MarketsView: View {
         NavigationStack {
             Group {
                 if model.isLoading {
-                    ProgressView()
+                    LoadingView()
                 } else if let error = model.errorMessage {
-                    Text(error)
-                        .foregroundStyle(.red)
+                    ErrorView(message: error) {
+                            await model.fetchCoins()
+                        }
                 } else {
                     coinList
                 }
@@ -28,7 +29,7 @@ struct MarketsView: View {
                 await model.fetchCoins()
             }
             .refreshable {
-                await model.fetchCoins()
+                await model.fetchCoins(forceRefresh: true)
             }
         }
     }

@@ -11,17 +11,23 @@ struct CoinDetail: CoinRepresentable, Codable, Identifiable {
     let id: String
     let name: String
     let symbol: String
-    let image: String
+    let imageData: CoinDetailImage
     let marketData: MarketData
 
     // CoinRepresentable
+    var image: String { imageData.large }
     var currentPrice: Double { marketData.currentPrice["usd"] ?? 0 }
     var priceChangePercentage24h: Double { marketData.priceChangePercentage24h }
 
     enum CodingKeys: String, CodingKey {
-        case id, name, symbol, image
+        case id, name, symbol
+        case imageData = "image"
         case marketData = "market_data"
     }
+}
+
+struct CoinDetailImage: Codable {
+    let large: String
 }
 
 struct MarketData: Codable {

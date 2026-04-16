@@ -86,7 +86,7 @@ struct MockData {
             id: "bitcoin",
             name: "Bitcoin",
             symbol: "btc",
-            image: "https://assets.coingecko.com/coins/images/1/large/bitcoin.png",
+            imageData: CoinDetailImage(large: "https://assets.coingecko.com/coins/images/1/large/bitcoin.png"),
             marketData: MarketData(
                 currentPrice: ["usd": 83241],
                 marketCap: ["usd": 1_640_000_000_000],
@@ -102,7 +102,7 @@ struct MockData {
             id: "ethereum",
             name: "Ethereum",
             symbol: "eth",
-            image: "https://assets.coingecko.com/coins/images/279/large/ethereum.png",
+            imageData: CoinDetailImage(large: "https://assets.coingecko.com/coins/images/279/large/ethereum.png"),
             marketData: MarketData(
                 currentPrice: ["usd": 1587],
                 marketCap: ["usd": 190_000_000_000],
@@ -118,7 +118,7 @@ struct MockData {
             id: "solana",
             name: "Solana",
             symbol: "sol",
-            image: "https://assets.coingecko.com/coins/images/4128/large/solana.png",
+            imageData: CoinDetailImage(large: "https://assets.coingecko.com/coins/images/4128/large/solana.png"),
             marketData: MarketData(
                 currentPrice: ["usd": 128.4],
                 marketCap: ["usd": 58_000_000_000],
@@ -134,7 +134,7 @@ struct MockData {
             id: "dogecoin",
             name: "Dogecoin",
             symbol: "doge",
-            image: "https://assets.coingecko.com/coins/images/5/large/dogecoin.png",
+            imageData: CoinDetailImage(large: "https://assets.coingecko.com/coins/images/5/large/dogecoin.png"),
             marketData: MarketData(
                 currentPrice: ["usd": 0.162],
                 marketCap: ["usd": 23_000_000_000],
@@ -150,7 +150,7 @@ struct MockData {
             id: "cardano",
             name: "Cardano",
             symbol: "ada",
-            image: "https://assets.coingecko.com/coins/images/975/large/cardano.png",
+            imageData: CoinDetailImage(large: "https://assets.coingecko.com/coins/images/975/large/cardano.png"),
             marketData: MarketData(
                 currentPrice: ["usd": 0.452],
                 marketCap: ["usd": 16_000_000_000],
@@ -166,7 +166,7 @@ struct MockData {
             id: "polkadot",
             name: "Polkadot",
             symbol: "dot",
-            image: "https://assets.coingecko.com/coins/images/12171/large/polkadot.png",
+            imageData: CoinDetailImage(large: "https://assets.coingecko.com/coins/images/12171/large/polkadot.png"),
             marketData: MarketData(
                 currentPrice: ["usd": 5.84],
                 marketCap: ["usd": 8_500_000_000],
@@ -182,7 +182,7 @@ struct MockData {
             id: "avalanche-2",
             name: "Avalanche",
             symbol: "avax",
-            image: "https://assets.coingecko.com/coins/images/12559/large/Avalanche_Circle_RedWhite_Trans.png",
+            imageData: CoinDetailImage(large: "https://assets.coingecko.com/coins/images/12559/large/Avalanche_Circle_RedWhite_Trans.png"),
             marketData: MarketData(
                 currentPrice: ["usd": 19.84],
                 marketCap: ["usd": 8_200_000_000],
