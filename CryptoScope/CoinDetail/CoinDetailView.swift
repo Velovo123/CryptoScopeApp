@@ -42,12 +42,14 @@ struct CoinDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                VStack(spacing: 0) {
                     Text(model.coinDetail?.name ?? "")
-                        .font(.title)
+                        .font(.headline)
                         .fontWeight(.bold)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
                     Text(model.coinDetail?.symbol.uppercased() ?? "")
-                        .font(.subheadline)
+                        .font(.caption)
                         .foregroundStyle(Color.secondary)
                 }
             }

@@ -47,7 +47,11 @@ class MarketModel {
             do {
                 self.coins = try await self.service.fetchCoins()
                 self.lastFetchTime = Date()
-            } catch {
+            }
+            catch is CancellationError {
+                // ignore cancellation — user navigated away
+            }
+            catch {
                 self.errorMessage = error.localizedDescription
             }
         }

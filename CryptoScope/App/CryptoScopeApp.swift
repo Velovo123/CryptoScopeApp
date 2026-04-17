@@ -16,6 +16,7 @@ struct CryptoScopeApp: App {
         WindowGroup {
             MainAppView()
                 .environment(watchlistStore)
+                .preferredColorScheme(.light)
         }.modelContainer(for: Holding.self)
     }
 }

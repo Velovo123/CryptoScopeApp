@@ -111,7 +111,10 @@ class CoinDetailModel {
                 guard !Task.isCancelled else { return }
                 cachedHistories[days] = history
                 priceHistory = history
-            } catch {
+            }
+            catch is CancellationError {
+                // ignore cancellation — user navigated away
+            }catch {
                 guard !Task.isCancelled else { return }
                 errorMessage = error.localizedDescription
             }

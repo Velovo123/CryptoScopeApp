@@ -28,7 +28,6 @@ struct MainAppView: View {
                 }
             }
             .tint(.brown)
-            .background(.beige)
         }
     }
 }
