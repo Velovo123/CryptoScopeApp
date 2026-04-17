@@ -1,5 +1,5 @@
 //
-//  DotsGridView.swift
+//  LogoMarkView.swift
 //  CryptoScope
 //
 //  Created by Anatolii Semenchuk on 15.04.2026.
