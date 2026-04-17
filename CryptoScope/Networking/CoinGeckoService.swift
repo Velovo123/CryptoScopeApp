@@ -13,54 +13,40 @@ class CoinGeckoService: DataServiceProtocol {
     private let session = URLSession.shared
     
     // MARK: - Fetch Coins
-    func fetchCoins() async throws -> [Coin] {
-        let urlString = "\(baseURL)/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&sparkline=true&price_change_percentage=24h"
+    func fetchCoins(currency: String) async throws -> [Coin] {
+        let urlString = "\(baseURL)/coins/markets?vs_currency=\(currency)&order=market_cap_desc&per_page=50&sparkline=true&price_change_percentage=24h"
         
         guard let url = URL(string: urlString) else {
             throw ServiceError.invalidURL
         }
         
         let (data, response) = try await session.data(from: url)
-        
         try validateResponse(response)
-        
-        if let jsonString = String(data: data, encoding: .utf8) {
-            print("RAW JSON: \(jsonString)")
-        }
-        
-        do {
-            return try JSONDecoder().decode([Coin].self, from: data)
-        } catch {
-            print("DECODE ERROR: \(error)")
-            throw error
-        }
+        return try JSONDecoder().decode([Coin].self, from: data)
     }
     
     // MARK: - Fetch Coin Detail
-    func fetchCoinDetail(id: String) async throws -> CoinDetail {
-        let urlString = "\(baseURL)/coins/\(id)?market_data=true&community_data=false&developer_data=false&tickers=false"
+    func fetchCoinDetail(id: String, currency: String) async throws -> CoinDetail {
+        let urlString = "\(baseURL)/coins/\(id)?market_data=true&vs_currency=\(currency)&community_data=false&developer_data=false&tickers=false"
         
         guard let url = URL(string: urlString) else {
             throw ServiceError.invalidURL
         }
         
         let (data, response) = try await session.data(from: url)
-        
         try validateResponse(response)
-        
         return try JSONDecoder().decode(CoinDetail.self, from: data)
     }
     
     // MARK: - Fetch Price History
-    func fetchPriceHistory(id: String, days: Int) async throws -> [PricePoint] {
-        let urlString = "\(baseURL)/coins/\(id)/market_chart?vs_currency=usd&days=\(days)"
+    func fetchPriceHistory(id: String, days: Int, currency: String) async throws -> [PricePoint] {
+        let urlString = "\(baseURL)/coins/\(id)/market_chart?vs_currency=\(currency)&days=\(days)"
         
         guard let url = URL(string: urlString) else {
             throw ServiceError.invalidURL
         }
         
         let (data, response) = try await session.data(from: url)
-        
         try validateResponse(response)
         
         let chartData = try JSONDecoder().decode(MarketChartResponse.self, from: data)

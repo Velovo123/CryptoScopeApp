@@ -9,10 +9,13 @@ import SwiftUI
 
 struct WatchlistView: View {
     @Environment(WatchlistStore.self) private var watchlistStore
+    @Environment(\.currency) private var currency
     
     @State private var coins: [Coin] = []
+    @State private var isLoading = false
+    @State private var errorMessage: String? = nil
     
-    private let service: DataServiceProtocol = MockDataService()
+    private let service: DataServiceProtocol = AppConfig.service
     
     var watchedCoins: [Coin] {
         coins.filter { watchlistStore.contains($0.id) }
@@ -21,15 +24,25 @@ struct WatchlistView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if watchedCoins.isEmpty {
+                if isLoading {
+                    LoadingView()
+                } else if let error = errorMessage {
+                    ErrorView(message: error) {
+                        await fetchCoins()
+                    }
+                } else if watchedCoins.isEmpty {
                     emptyState
                 } else {
                     coinList
                 }
-            }.appBackground()
-            .navigationTitle("Watchlist")
+            }
+            .appBackground()
+            .navigationTitle(Constants.TabBar.watchlist)
             .task {
                 await fetchCoins()
+            }
+            .onChange(of: currency) { _, _ in
+                Task { await fetchCoins() }
             }
         }
     }
@@ -48,7 +61,7 @@ struct WatchlistView: View {
                 }
             }
         }
-        .appBackground()
+        .scrollContentBackground(.hidden)
     }
     
     private var emptyState: some View {
@@ -67,7 +80,20 @@ struct WatchlistView: View {
     }
     
     private func fetchCoins() async {
-        coins = (try? await service.fetchCoins()) ?? []
+        isLoading = true
+        errorMessage = nil
+        
+        await withMinimumDuration(seconds: 1.5) {
+            do {
+                self.coins = try await self.service.fetchCoins(currency: self.currency)
+            } catch is CancellationError {
+                // ignore
+            } catch {
+                self.errorMessage = error.localizedDescription
+            }
+        }
+        
+        isLoading = false
     }
 }
 

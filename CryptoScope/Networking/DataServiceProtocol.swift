@@ -8,7 +8,7 @@
 import Foundation
 
 protocol DataServiceProtocol {
-    func fetchCoins() async throws -> [Coin]
-    func fetchCoinDetail(id: String) async throws -> CoinDetail
-    func fetchPriceHistory(id: String, days: Int) async throws -> [PricePoint]
+    func fetchCoins(currency: String) async throws -> [Coin]
+    func fetchCoinDetail(id: String, currency: String) async throws -> CoinDetail
+    func fetchPriceHistory(id: String, days: Int, currency: String) async throws -> [PricePoint]
 }

@@ -8,9 +8,17 @@
 import Foundation
 
 enum AppConfig {
-    static let useMockData = false  // ← switch here
+    static let useMockData = false
     
     static var service: DataServiceProtocol {
         useMockData ? MockDataService() : CoinGeckoService()
+    }
+    
+    static var currency: String {
+        UserDefaults.standard.string(forKey: Constants.UserDefaultsKeys.selectedCurrency) ?? "USD"
+    }
+    
+    static var currencyCode: String {
+        currency.lowercased()
     }
 }

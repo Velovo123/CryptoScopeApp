@@ -10,23 +10,23 @@ import SwiftUI
 struct ErrorView: View {
     let message: String
     let onRetry: () async -> Void
-
+    
     var body: some View {
         VStack(spacing: 16) {
             Image(systemName: "exclamationmark.triangle")
                 .font(.system(size: 48))
                 .foregroundStyle(Color.brown)
-
+            
             Text("Something went wrong")
                 .font(.headline)
                 .foregroundStyle(Color.primary)
-
+            
             Text(message)
                 .font(.subheadline)
                 .foregroundStyle(Color.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
-
+            
             Button {
                 Task { await onRetry() }
             } label: {

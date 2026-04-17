@@ -14,10 +14,11 @@ class MarketModel {
     var searchText: String = ""
     var isLoading: Bool = false
     var errorMessage: String? = nil
+    var currency: String = Constants.Currency.usd
     
     private let service: DataServiceProtocol
     private var lastFetchTime: Date? = nil
-    private let cacheExpiry: TimeInterval = 120 // 2 minutes
+    private let cacheExpiry: TimeInterval = 120
     
     init(service: DataServiceProtocol = AppConfig.service) {
         self.service = service
@@ -45,17 +46,23 @@ class MarketModel {
         
         await withMinimumDuration(seconds: 1.5) {
             do {
-                self.coins = try await self.service.fetchCoins()
+                self.coins = try await self.service.fetchCoins(currency: self.currency)
                 self.lastFetchTime = Date()
-            }
-            catch is CancellationError {
-                // ignore cancellation — user navigated away
-            }
-            catch {
+            } catch is CancellationError {
+                // ignore
+            } catch {
                 self.errorMessage = error.localizedDescription
             }
         }
         
         isLoading = false
+    }
+    
+    func updateCurrency(_ newCurrency: String) async {
+        guard currency != newCurrency else { return }
+        currency = newCurrency
+        lastFetchTime = nil
+        coins = []
+        await fetchCoins(forceRefresh: true)
     }
 }

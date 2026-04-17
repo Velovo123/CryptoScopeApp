@@ -9,17 +9,21 @@ import SwiftUI
 import SwiftData
 
 struct PortfolioView: View {
-    @Environment(\.modelContext) private var modelContext
     @State private var model = PortfolioModel()
     @State private var showAddHolding = false
-
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.currency) private var currency
     @Query private var holdings: [Holding]
-
+    
     var body: some View {
         NavigationStack {
             Group {
                 if model.isLoading {
                     LoadingView()
+                } else if let error = model.errorMessage {
+                    ErrorView(message: error) {
+                        await model.fetchCoins()
+                    }
                 } else if holdings.isEmpty {
                     emptyState
                 } else {
@@ -41,22 +45,24 @@ struct PortfolioView: View {
                 AddHoldingView(coins: model.coins)
             }
             .task {
+                model.currency = currency
                 await model.fetchCoins()
+            }
+            .onChange(of: currency) { _, newCurrency in
+                model.currency = newCurrency
             }
             .appBackground()
         }
     }
-
-    // MARK: - Portfolio List
+    
     private var portfolioList: some View {
         List {
-            // total value card
             Section {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Total value")
                         .font(.caption)
                         .foregroundStyle(Color.secondary)
-                    Text(model.totalValue(holdings: holdings).formattedAsPrice)
+                    Text(model.totalValue(holdings: holdings).formattedAsPrice(currency: currency))
                         .font(.title)
                         .fontWeight(.medium)
                     PortfolioChartView(holdings: holdings, model: model)
@@ -64,8 +70,7 @@ struct PortfolioView: View {
                 .padding(.vertical, 8)
                 .listRowBackground(Color.beige)
             }
-
-            // holdings
+            
             Section("Holdings") {
                 ForEach(holdings) { holding in
                     NavigationLink(destination: CoinDetailView(coinId: holding.coinId)) {
@@ -79,8 +84,7 @@ struct PortfolioView: View {
         .scrollContentBackground(.hidden)
         .background(Color.beige)
     }
-
-    // MARK: - Holding Row
+    
     private func holdingRow(_ holding: Holding) -> some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 2) {
@@ -91,22 +95,21 @@ struct PortfolioView: View {
                     .font(.caption)
                     .foregroundStyle(Color.secondary)
             }
-
+            
             Spacer()
-
+            
             VStack(alignment: .trailing, spacing: 2) {
-                Text(model.currentValue(for: holding).formattedAsPrice)
+                Text(model.currentValue(for: holding).formattedAsPrice(currency: currency))
                     .font(.subheadline)
                     .fontWeight(.medium)
-                Text(model.profitLoss(for: holding).formattedAsPrice)
+                Text(model.profitLoss(for: holding).formattedAsPrice(currency: currency))
                     .font(.caption)
                     .foregroundStyle(model.profitLoss(for: holding) >= 0 ? Color.priceUp : Color.priceDown)
             }
         }
         .padding(.vertical, 4)
     }
-
-    // MARK: - Empty State
+    
     private var emptyState: some View {
         VStack(spacing: 12) {
             Image(systemName: "briefcase")
@@ -120,8 +123,7 @@ struct PortfolioView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-
-    // MARK: - Delete
+    
     private func deleteHolding(at offsets: IndexSet) {
         for index in offsets {
             modelContext.delete(holdings[index])
@@ -133,4 +135,5 @@ struct PortfolioView: View {
 #Preview {
     PortfolioView()
         .environment(WatchlistStore())
+        .modelContainer(for: Holding.self, inMemory: true)
 }

@@ -14,16 +14,16 @@ struct MainAppView: View {
     var body: some View {
         VStack{
             TabView(selection: $selection) {
-                Tab("Markets", systemImage: "chart.line.uptrend.xyaxis", value: 0) {
+                Tab(Constants.TabBar.markets, systemImage: Constants.TabBar.Icons.markets, value: 0) {
                     MarketsView()
                 }
-                Tab("Watchlist", systemImage: "star", value: 1) {
+                Tab(Constants.TabBar.watchlist, systemImage: Constants.TabBar.Icons.watchlist, value: 1) {
                     WatchlistView()
                 }
-                Tab("Portfolio", systemImage: "briefcase", value: 2) {
+                Tab(Constants.TabBar.portfolio, systemImage: Constants.TabBar.Icons.portfolio, value: 2) {
                     PortfolioView()
                 }
-                Tab("Settings", systemImage: "gearshape", value: 3) {
+                Tab(Constants.TabBar.settings, systemImage: Constants.TabBar.Icons.settings, value: 3) {
                     SettingsView()
                 }
             }

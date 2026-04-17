@@ -10,7 +10,7 @@ import Observation
 
 @Observable
 class WatchlistStore {
-    private let key = "watchlist_coin_ids"
+    private let key = Constants.UserDefaultsKeys.watchlistCoinIds
     
     var coinIds: [String] = []
     

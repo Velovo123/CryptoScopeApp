@@ -11,6 +11,7 @@ struct CoinDetailView: View {
     @State private var model: CoinDetailModel
     @Environment(WatchlistStore.self) private var watchlistStore
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.currency) private var currency
     @State private var showAddHolding = false
     
     init(coinId: String) {
@@ -37,6 +38,9 @@ struct CoinDetailView: View {
                 }
             }
         }
+        .onChange(of: currency) { _, newCurrency in
+            Task { await model.updateCurrency(newCurrency) }
+        }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .appBackground()
         .navigationBarTitleDisplayMode(.inline)
@@ -55,6 +59,7 @@ struct CoinDetailView: View {
             }
         }
         .task {
+            model.currency = currency
             await model.fetchData()
         }
         .sheet(isPresented: $showAddHolding) {
@@ -77,7 +82,7 @@ struct CoinDetailView: View {
     // MARK: — Header
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(model.currentPrice.formattedAsPrice)
+            Text(model.currentPrice.formattedAsPrice(currency: model.currency))
                 .font(.largeTitle)
                 .fontWeight(.medium)
             
@@ -121,11 +126,11 @@ struct CoinDetailView: View {
                 GridItem(.flexible()),
                 GridItem(.flexible())
             ], spacing: 12) {
-                StatCardView(title: "Market cap", value: model.marketCap.formattedAsCompact)
-                StatCardView(title: "24h volume", value: model.totalVolume.formattedAsCompact)
-                StatCardView(title: "All time high", value: model.ath.formattedAsCompact)
-                StatCardView(title: "24h high", value: model.high24h.formattedAsPrice)
-                StatCardView(title: "24h low", value: model.low24h.formattedAsPrice)
+                StatCardView(title: "Market cap", value: model.marketCap.formattedAsCompact(currency: model.currency))
+                StatCardView(title: "24h volume", value: model.totalVolume.formattedAsCompact(currency: model.currency))
+                StatCardView(title: "All time high", value: model.ath.formattedAsCompact(currency: model.currency))
+                StatCardView(title: "24h high", value: model.high24h.formattedAsPrice(currency: model.currency))
+                StatCardView(title: "24h low", value: model.low24h.formattedAsPrice(currency: model.currency))
             }
             actionButtons
         }

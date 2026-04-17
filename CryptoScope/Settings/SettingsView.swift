@@ -8,40 +8,32 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @AppStorage("selectedCurrency") private var selectedCurrency = "USD"
-    @AppStorage("selectedAppearance") private var selectedAppearance = "System"
-
-    private let currencies = ["USD", "EUR", "GBP", "JPY"]
-    private let appearances = ["System", "Light", "Dark"]
-
+    @AppStorage(Constants.UserDefaultsKeys.selectedCurrency) private var selectedCurrency = Constants.Settings.currencies.first!
+    @AppStorage(Constants.UserDefaultsKeys.selectedAppearance) private var selectedAppearance = Constants.Settings.appearances.first!
+    
     var body: some View {
         NavigationStack {
             List {
-                Section("Preferences") {
-                    Picker("Currency", selection: $selectedCurrency) {
-                        ForEach(currencies, id: \.self) { Text($0).tag($0) }
-                    }
-                    .listRowBackground(Color.lightBrown.opacity(0.3))
-
-                    Picker("Appearance", selection: $selectedAppearance) {
-                        ForEach(appearances, id: \.self) { Text($0).tag($0) }
+                Section(Constants.Settings.preferencesSection) {
+                    Picker(Constants.Settings.currencyLabel, selection: $selectedCurrency) {
+                        ForEach(Constants.Settings.currencies, id: \.self) { Text($0).tag($0) }
                     }
                     .listRowBackground(Color.lightBrown.opacity(0.3))
                 }
-
-                Section("About") {
+                
+                Section(Constants.Settings.aboutSection) {
                     HStack {
-                        Text("Version")
+                        Text(Constants.Settings.versionLabel)
                         Spacer()
-                        Text("1.0.0")
+                        Text(Constants.Settings.versionNumber)
                             .foregroundStyle(Color.secondary)
                     }
                     .listRowBackground(Color.lightBrown.opacity(0.3))
-
+                    
                     HStack {
-                        Text("Data source")
+                        Text(Constants.Settings.dataSourceLabel)
                         Spacer()
-                        Text("CoinGecko")
+                        Text(Constants.Settings.dataSourceValue)
                             .foregroundStyle(Color.secondary)
                     }
                     .listRowBackground(Color.lightBrown.opacity(0.3))
@@ -49,7 +41,7 @@ struct SettingsView: View {
             }
             .scrollContentBackground(.hidden)
             .background(Color.beige)
-            .navigationTitle("Settings")
+            .navigationTitle(Constants.Settings.title)
         }
     }
 }

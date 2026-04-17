@@ -8,15 +8,15 @@
 import Foundation
 
 class MockDataService: DataServiceProtocol {
-    func fetchCoins() async throws -> [Coin] {
+    func fetchCoins(currency: String) async throws -> [Coin] {
         MockData.coins
     }
     
-    func fetchCoinDetail(id: String) async throws -> CoinDetail {
+    func fetchCoinDetail(id: String, currency: String) async throws -> CoinDetail {
         MockData.coinDetails[id] ?? MockData.coinDetails["bitcoin"]!
     }
-
-    func fetchPriceHistory(id: String, days: Int) async throws -> [PricePoint] {
+    
+    func fetchPriceHistory(id: String, days: Int, currency: String) async throws -> [PricePoint] {
         MockData.priceHistories[id] ?? MockData.priceHistory
     }
 }

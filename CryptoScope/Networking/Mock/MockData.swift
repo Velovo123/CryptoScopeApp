@@ -254,7 +254,7 @@ struct MockData {
             )
         }
     }
-
+    
     static let priceHistory = makePriceHistory(prices: [
         76000, 76500, 77200, 76800, 77500, 78000, 77800,
         78500, 79000, 78700, 79500, 80000, 79800, 80500,

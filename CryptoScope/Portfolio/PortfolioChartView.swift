@@ -11,10 +11,10 @@ import Charts
 struct PortfolioChartView: View {
     let holdings: [Holding]
     let model: PortfolioModel
-
+    
     private var chartData: [(day: Int, value: Double)] {
         guard !holdings.isEmpty else { return [] }
-
+        
         return (0..<30).map { day in
             let factor = 1.0 - Double(29 - day) * 0.002
             let value = holdings.reduce(0.0) { total, holding in
@@ -24,15 +24,15 @@ struct PortfolioChartView: View {
             return (day: day, value: value)
         }
     }
-
+    
     private var minValue: Double {
         chartData.map(\.value).min() ?? 0
     }
-
+    
     private var maxValue: Double {
         chartData.map(\.value).max() ?? 0
     }
-
+    
     var body: some View {
         Chart {
             ForEach(chartData, id: \.day) { point in
@@ -42,7 +42,7 @@ struct PortfolioChartView: View {
                 )
                 .foregroundStyle(Color.sage)
                 .interpolationMethod(.catmullRom)
-
+                
                 AreaMark(
                     x: .value("Day", point.day),
                     yStart: .value("Min", minValue),

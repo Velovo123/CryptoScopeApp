@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MarketsView: View {
     @State private var model = MarketModel()
+    @Environment(\.currency) private var currency
     
     var body: some View {
         NavigationStack {
@@ -17,19 +18,24 @@ struct MarketsView: View {
                     LoadingView()
                 } else if let error = model.errorMessage {
                     ErrorView(message: error) {
-                            await model.fetchCoins()
-                        }
+                        await model.fetchCoins()
+                    }
                 } else {
                     coinList
                 }
-            }.appBackground()
-            .navigationTitle("Markets")
+            }
+            .appBackground()
+            .navigationTitle(Constants.TabBar.markets)
             .searchable(text: $model.searchText, prompt: "Search coins...")
             .task {
+                model.currency = currency
                 await model.fetchCoins()
             }
             .refreshable {
                 await model.fetchCoins(forceRefresh: true)
+            }
+            .onChange(of: currency) { _, newCurrency in
+                Task { await model.updateCurrency(newCurrency) }
             }
         }
     }
@@ -46,5 +52,6 @@ struct MarketsView: View {
 }
 
 #Preview {
-    MarketsView().environment(WatchlistStore())
+    MarketsView()
+        .environment(WatchlistStore())
 }

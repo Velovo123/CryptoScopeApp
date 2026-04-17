@@ -10,18 +10,18 @@ import SwiftUI
 struct LoadingView: View {
     let action: () async -> Void
     @State private var hasAppeared = false
-
+    
     init(action: @escaping () async -> Void = {}) {
         self.action = action
     }
-
+    
     var body: some View {
         VStack(spacing: 12) {
             ProgressView()
                 .progressViewStyle(.circular)
                 .tint(Color.brown)
                 .scaleEffect(1.5)
-
+            
             Text("Loading...")
                 .font(.subheadline)
                 .foregroundStyle(Color.secondary)

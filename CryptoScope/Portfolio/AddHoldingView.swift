@@ -11,15 +11,15 @@ import SwiftData
 struct AddHoldingView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-
+    
     let coins: [Coin]
-
+    
     @State private var searchText: String = ""
     @State private var selectedCoin: Coin? = nil
     @State private var quantity: String = ""
     @State private var buyPrice: String = ""
     @State private var dateAdded: Date = .now
-
+    
     private var filteredCoins: [Coin] {
         if searchText.isEmpty { return coins }
         return coins.filter {
@@ -27,13 +27,13 @@ struct AddHoldingView: View {
             $0.symbol.localizedCaseInsensitiveContains(searchText)
         }
     }
-
+    
     private var isValid: Bool {
         selectedCoin != nil &&
         Double(quantity) != nil &&
         Double(buyPrice) != nil
     }
-
+    
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -60,7 +60,7 @@ struct AddHoldingView: View {
             }
         }
     }
-
+    
     // MARK: — Coin Picker
     private var coinPicker: some View {
         List(filteredCoins) { coin in
@@ -76,7 +76,7 @@ struct AddHoldingView: View {
         .scrollContentBackground(.hidden)
         .background(Color.beige)
     }
-
+    
     // MARK: — Holding Form
     private var holdingForm: some View {
         Form {
@@ -93,7 +93,7 @@ struct AddHoldingView: View {
                     .listRowBackground(Color.lightBrown.opacity(0.3))
                 }
             }
-
+            
             Section("Details") {
                 HStack {
                     Text("Quantity")
@@ -103,7 +103,7 @@ struct AddHoldingView: View {
                         .multilineTextAlignment(.trailing)
                 }
                 .listRowBackground(Color.lightBrown.opacity(0.3))
-
+                
                 HStack {
                     Text("Buy price")
                     Spacer()
@@ -112,7 +112,7 @@ struct AddHoldingView: View {
                         .multilineTextAlignment(.trailing)
                 }
                 .listRowBackground(Color.lightBrown.opacity(0.3))
-
+                
                 DatePicker("Date", selection: $dateAdded, displayedComponents: .date)
                     .listRowBackground(Color.lightBrown.opacity(0.3))
             }
@@ -120,13 +120,13 @@ struct AddHoldingView: View {
         .scrollContentBackground(.hidden)
         .background(Color.beige)
     }
-
+    
     // MARK: — Save
     private func saveHolding() {
         guard let coin = selectedCoin,
               let qty = Double(quantity),
               let price = Double(buyPrice) else { return }
-
+        
         let holding = Holding(
             coinId: coin.id,
             coinName: coin.name,
@@ -135,7 +135,7 @@ struct AddHoldingView: View {
             buyPrice: price,
             dateAdded: dateAdded
         )
-
+        
         modelContext.insert(holding)
         dismiss()
     }

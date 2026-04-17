@@ -15,6 +15,7 @@ class CoinDetailModel {
     var selectedRange: Int = 7
     var isLoading: Bool = false
     var errorMessage: String? = nil
+    var currency: String = Constants.Currency.usd
     
     private let coinId: String
     private let service: DataServiceProtocol
@@ -35,7 +36,7 @@ class CoinDetailModel {
     }
     
     var currentPrice: Double {
-        coinDetail?.marketData.currentPrice["usd"] ?? 0
+        coinDetail?.marketData.currentPrice[currency] ?? 0
     }
     
     var priceChange: Double {
@@ -43,23 +44,23 @@ class CoinDetailModel {
     }
     
     var marketCap: Double {
-        coinDetail?.marketData.marketCap["usd"] ?? 0
+        coinDetail?.marketData.marketCap[currency] ?? 0
     }
     
     var totalVolume: Double {
-        coinDetail?.marketData.totalVolume["usd"] ?? 0
+        coinDetail?.marketData.totalVolume[currency] ?? 0
     }
     
     var high24h: Double {
-        coinDetail?.marketData.high24h["usd"] ?? 0
+        coinDetail?.marketData.high24h[currency] ?? 0
     }
     
     var low24h: Double {
-        coinDetail?.marketData.low24h["usd"] ?? 0
+        coinDetail?.marketData.low24h[currency] ?? 0
     }
     
     var ath: Double {
-        coinDetail?.marketData.ath["usd"] ?? 0
+        coinDetail?.marketData.ath[currency] ?? 0
     }
     
     func fetchData() async {
@@ -76,8 +77,8 @@ class CoinDetailModel {
         
         await withMinimumDuration(seconds: 1.5) {
             do {
-                async let detail = self.service.fetchCoinDetail(id: self.coinId)
-                async let history = self.service.fetchPriceHistory(id: self.coinId, days: self.selectedRange)
+                async let detail = self.service.fetchCoinDetail(id: self.coinId, currency: self.currency)
+                async let history = self.service.fetchPriceHistory(id: self.coinId, days: self.selectedRange, currency: self.currency)
                 
                 let fetchedDetail = try await detail
                 let fetchedHistory = try await history
@@ -107,19 +108,27 @@ class CoinDetailModel {
         
         currentTask = Task {
             do {
-                let history = try await service.fetchPriceHistory(id: coinId, days: days)
+                let history = try await service.fetchPriceHistory(id: coinId, days: days, currency: currency)
                 guard !Task.isCancelled else { return }
                 cachedHistories[days] = history
                 priceHistory = history
-            }
-            catch is CancellationError {
-                // ignore cancellation — user navigated away
-            }catch {
+            } catch is CancellationError {
+                // ignore
+            } catch {
                 guard !Task.isCancelled else { return }
                 errorMessage = error.localizedDescription
             }
         }
         
         await currentTask?.value
+    }
+    
+    func updateCurrency(_ newCurrency: String) async {
+        guard currency != newCurrency else { return }
+        currency = newCurrency
+        cachedDetail = nil
+        detailFetchTime = nil
+        cachedHistories = [:]
+        await fetchData()
     }
 }

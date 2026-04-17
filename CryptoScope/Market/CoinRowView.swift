@@ -10,15 +10,7 @@ import SwiftUI
 
 struct CoinRowView: View {
     let coin: Coin
-    private var formattedPrice: String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencySymbol = "$"
-        formatter.currencyCode = "USD"
-        formatter.locale = Locale(identifier: "en_US")
-        formatter.maximumFractionDigits = coin.currentPrice >= 1 ? 2 : 4
-        return formatter.string(from: NSNumber(value: coin.currentPrice)) ?? ""
-    }
+    @Environment(\.currency) private var currency
     
     var body: some View {
         HStack(spacing: 12) {
@@ -45,18 +37,18 @@ struct CoinRowView: View {
             
             Spacer()
             
-            
-            SparklineChartView(prices: coin.sparklineIn7d?.price ?? []).frame(width: 60, height: 30)
+            SparklineChartView(prices: coin.sparklineIn7d?.price ?? [])
+                .frame(width: 60, height: 30)
             
             VStack(alignment: .trailing, spacing: 2) {
-                    Text(formattedPrice)
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundStyle(Color.primary)
+                Text(coin.currentPrice.formattedAsPrice(currency: currency))
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundStyle(Color.primary)
                 Text(coin.priceChangePercentage24h.formattedAsPercentage)
                     .font(.caption)
                     .foregroundStyle(coin.priceChangePercentage24h >= 0 ? Color.priceUp : Color.priceDown)
-                }
+            }
         }
         .padding(.vertical, 4)
         .padding(.horizontal, 8)

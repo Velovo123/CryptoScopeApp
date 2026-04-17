@@ -18,8 +18,8 @@ struct Coin: CoinRepresentable, Codable, Identifiable {
     let sparklineIn7d: SparklineData?
     
     var priceChangePercentage24h: Double {
-            priceChangePercentage24hRaw ?? 0
-        }
+        priceChangePercentage24hRaw ?? 0
+    }
     
     init(id: String, name: String, symbol: String, image: String, currentPrice: Double, priceChangePercentage24h: Double?, marketCapRank: Int, sparklineIn7d: SparklineData?) {
         self.id = id
