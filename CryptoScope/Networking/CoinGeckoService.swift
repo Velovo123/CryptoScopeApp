@@ -12,7 +12,7 @@ class CoinGeckoService: DataServiceProtocol {
     private let baseURL = "https://api.coingecko.com/api/v3"
     private let session = URLSession.shared
     
-    // MARK: - Fetch Coins
+
     func fetchCoins(currency: String) async throws -> [Coin] {
         let urlString = "\(baseURL)/coins/markets?vs_currency=\(currency)&order=market_cap_desc&per_page=50&sparkline=true&price_change_percentage=24h"
         
@@ -25,7 +25,7 @@ class CoinGeckoService: DataServiceProtocol {
         return try JSONDecoder().decode([Coin].self, from: data)
     }
     
-    // MARK: - Fetch Coin Detail
+
     func fetchCoinDetail(id: String, currency: String) async throws -> CoinDetail {
         let urlString = "\(baseURL)/coins/\(id)?market_data=true&vs_currency=\(currency)&community_data=false&developer_data=false&tickers=false"
         
@@ -38,7 +38,7 @@ class CoinGeckoService: DataServiceProtocol {
         return try JSONDecoder().decode(CoinDetail.self, from: data)
     }
     
-    // MARK: - Fetch Price History
+
     func fetchPriceHistory(id: String, days: Int, currency: String) async throws -> [PricePoint] {
         let urlString = "\(baseURL)/coins/\(id)/market_chart?vs_currency=\(currency)&days=\(days)"
         
@@ -59,7 +59,7 @@ class CoinGeckoService: DataServiceProtocol {
         }
     }
     
-    // MARK: - Helpers
+
     private func validateResponse(_ response: URLResponse) throws {
         guard let httpResponse = response as? HTTPURLResponse else {
             throw ServiceError.invalidResponse
@@ -76,12 +76,12 @@ class CoinGeckoService: DataServiceProtocol {
     }
 }
 
-// MARK: - Response Models
+
 private struct MarketChartResponse: Codable {
     let prices: [[Double]]
 }
 
-// MARK: - Errors
+
 enum ServiceError: LocalizedError {
     case invalidURL
     case invalidResponse

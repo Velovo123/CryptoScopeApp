@@ -14,7 +14,7 @@ struct CoinDetail: CoinRepresentable, Codable, Identifiable {
     let imageData: CoinDetailImage
     let marketData: MarketData
     
-    // CoinRepresentable
+
     var image: String { imageData.large }
     var currentPrice: Double { marketData.currentPrice["usd"] ?? 0 }
     var priceChangePercentage24h: Double { marketData.priceChangePercentage24h }

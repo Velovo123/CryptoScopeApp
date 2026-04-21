@@ -15,14 +15,13 @@ struct LaunchScreenView: View {
     
     var body: some View {
         ZStack {
-            // Base background
+
             Color("BeigeColor")
                 .ignoresSafeArea()
             
-            // Dot grid texture
+
             DotsGridView()
             
-            // Ambient glow behind logo
             RadialGradient(
                 colors: [
                     Color("BrownColor").opacity(0.08),
@@ -34,10 +33,10 @@ struct LaunchScreenView: View {
             )
             .frame(width: 320, height: 320)
             
-            // Pulse rings
+
             PulseRingsView(isAnimating: isAnimating)
             
-            // Logo + wordmark
+
             VStack(spacing: 16) {
                 LogoMarkView()
                 WordmarkView()
@@ -45,7 +44,7 @@ struct LaunchScreenView: View {
             .scaleEffect(logoScale)
             .opacity(logoOpacity)
             
-            // Loader at bottom
+
             VStack {
                 Spacer()
                 LoaderBarView(isAnimating: isAnimating)

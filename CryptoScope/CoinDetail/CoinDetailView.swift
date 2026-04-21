@@ -79,7 +79,7 @@ struct CoinDetailView: View {
         }
     }
     
-    // MARK: — Header
+
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(model.currentPrice.formattedAsPrice(currency: model.currency))
@@ -92,7 +92,7 @@ struct CoinDetailView: View {
         }
     }
     
-    // MARK: — Time Range
+
     private var timeRangeSelector: some View {
         HStack {
             ForEach([1, 7, 30, 90], id: \.self) { days in
@@ -115,7 +115,7 @@ struct CoinDetailView: View {
         .clipShape(Capsule())
     }
     
-    // MARK: — Stats
+
     private var statsSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Statistics")
@@ -136,7 +136,7 @@ struct CoinDetailView: View {
         }
     }
     
-    // MARK: — Action Buttons
+
     private var actionButtons: some View {
         HStack(spacing: 12) {
             Button {

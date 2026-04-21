@@ -10,7 +10,7 @@ import SwiftUI
 struct PulseRingsView: View {
     let isAnimating: Bool
     
-    // Each ring has its own delay
+
     private let rings: [(delay: Double, maxScale: CGFloat, opacity: CGFloat)] = [
         (0.0,  1.6, 0.35),
         (0.55, 1.9, 0.20),
@@ -56,7 +56,7 @@ struct PulseRing: View {
     }
     
     private func startPulsing() {
-        // Reset
+
         scale = 0.5
         opacity = 0
         
@@ -70,7 +70,7 @@ struct PulseRing: View {
             opacity = 0
         }
         
-        // Fade in quickly at start of each cycle
+
         withAnimation(.easeIn(duration: 0.4).delay(delay)) {
             opacity = maxOpacity
         }

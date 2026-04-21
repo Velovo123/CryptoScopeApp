@@ -18,12 +18,12 @@ struct LoaderBarView: View {
     
     var body: some View {
         ZStack(alignment: .leading) {
-            // Track
+
             Capsule()
                 .fill(Color("AccentColor").opacity(0.18))
                 .frame(width: trackWidth, height: barHeight)
             
-            // Animated fill
+
             Capsule()
                 .fill(Color("AccentColor"))
                 .frame(width: fillWidth, height: barHeight)
@@ -43,12 +43,12 @@ struct LoaderBarView: View {
         fillWidth = 0
         fillOffset = 0
         
-        // Phase 1: sweep right
+
         withAnimation(.easeInOut(duration: 0.9)) {
             fillWidth = trackWidth * 0.7
         }
         
-        // Phase 2: exit right
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
             withAnimation(.easeIn(duration: 0.5)) {
                 fillOffset = trackWidth
@@ -56,7 +56,7 @@ struct LoaderBarView: View {
             }
         }
         
-        // Loop
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) {
             fillOffset = 0
             fillWidth = 0

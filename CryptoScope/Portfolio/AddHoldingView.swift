@@ -61,7 +61,7 @@ struct AddHoldingView: View {
         }
     }
     
-    // MARK: — Coin Picker
+
     private var coinPicker: some View {
         List(filteredCoins) { coin in
             Button {
@@ -77,7 +77,7 @@ struct AddHoldingView: View {
         .background(Color.beige)
     }
     
-    // MARK: — Holding Form
+
     private var holdingForm: some View {
         Form {
             Section("Selected coin") {
@@ -121,7 +121,7 @@ struct AddHoldingView: View {
         .background(Color.beige)
     }
     
-    // MARK: — Save
+
     private func saveHolding() {
         guard let coin = selectedCoin,
               let qty = Double(quantity),
