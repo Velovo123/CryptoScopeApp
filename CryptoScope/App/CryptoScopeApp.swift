@@ -10,9 +10,32 @@ import SwiftData
 
 @main
 struct CryptoScopeApp: App {
+    @State private var watchlistStore = WatchlistStore()
+    @AppStorage(Constants.UserDefaultsKeys.selectedCurrency) private var selectedCurrency = "USD"
+    @State private var showLaunch = true
+    
     var body: some Scene {
         WindowGroup {
-            Text("CryptoScope")
-        }.modelContainer(for: Holding.self)
+            ZStack {
+                MainAppView()
+                    .environment(watchlistStore)
+                    .environment(\.currency, selectedCurrency.lowercased())
+                    .preferredColorScheme(.light)
+                
+                if showLaunch {
+                    LaunchScreenView()
+                        .transition(.opacity)
+                        .zIndex(1)
+                }
+            }
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                    withAnimation(.easeOut(duration: 0.4)) {
+                        showLaunch = false
+                    }
+                }
+            }
+        }
+        .modelContainer(for: Holding.self)
     }
 }
